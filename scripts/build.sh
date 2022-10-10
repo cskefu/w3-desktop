@@ -18,6 +18,6 @@ cd $baseDir/..
 
 rm -rf dist dist-js  && yarn compile
 
-echo "for macOS, run `npm run build:macos`"
+echo "for macOS, run `npm run compile && npm run build:macos`"
 set -x
 yarn build:windows

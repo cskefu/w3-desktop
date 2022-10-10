@@ -5,7 +5,10 @@
   "repository": "cskefu/desktop-cskefu-w3",
   "appId": "desktop.cskefu.w3",
   "appUrl": "https://www.cskefu.com/wp-admin/index.php",
-  "allowedInternalUrlDomain": "cskefu.com/wp-admin",
+  "allowedInternalUrlDomain": [
+    "cskefu.com/wp-admin",
+    "https://www.cskefu.com/wp-login.php"
+  ],
   "private": true,
   "version": "2.25.3",
   "author": "Hai Liang Wang <hai@chatopera.com>",

@@ -12,9 +12,7 @@ import { init as initDebug } from './debug'
 import { init as initDownloads } from './downloads'
 import { platform } from './helpers'
 import { initOrUpdateMenu } from './menu'
-import {
-  setAppMenuBarVisibility,
-} from './utils'
+import { setAppMenuBarVisibility } from './utils'
 
 import electronContextMenu = require('electron-context-menu')
 import * as jsonfile from 'jsonfile'
@@ -125,37 +123,38 @@ function createWindow(): void {
     initCustomStyles()
   })
 
-  mainWindow.webContents.on('did-finish-load', async () => {
-  })
+  mainWindow.webContents.on('did-finish-load', async () => {})
 
-
-  mainWindow.webContents.on('new-window', newEvent => {
+  mainWindow.webContents.on('new-window', (newEvent) => {
     console.log("Blocked by 'new-window'")
-    newEvent.preventDefault();
-  });
+    newEvent.preventDefault()
+  })
 
   mainWindow.webContents.on('will-navigate', (newEvent, url) => {
     console.log("Handled by 'will-navigate' " + url)
-    if (!url.includes(pkgJSON.allowedInternalUrlDomain)) {
-      newEvent.preventDefault()
-      setImmediate(() => {
-        openExternalUrl(url);
-      });
-      return;
+
+    for (let x of pkgJSON.allowedInternalUrlDomain) {
+      if (url.includes(x)) {
+        return
+      }
     }
-  });
+
+    newEvent.preventDefault()
+    setImmediate(() => {
+      openExternalUrl(url)
+    })
+  })
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    console.log("[setWindowOpenHandler] " + url)
-    if (!url.includes(pkgJSON.allowedInternalUrlDomain)) {
-      console.log("Blocked by 'setWindowOpenHandler'")
-      setImmediate(() => {
-        openExternalUrl(url);
-      });
-      return { action: 'deny' }
-    } else {
-      return { action: 'allow' }
+    console.log('[setWindowOpenHandler] ' + url)
+
+    for (let x of pkgJSON.allowedInternalUrlDomain) {
+      if (url.includes(x)) {
+        return { action: 'allow' }
+      }
     }
+
+    return { action: 'deny' }
   })
 }
 
@@ -231,48 +230,48 @@ app.on('before-quit', () => {
 app.on('window-all-closed', () => {
   app.quit()
 })
-  ; (async () => {
-    await Promise.all([app.whenReady()])
+;(async () => {
+  await Promise.all([app.whenReady()])
 
-    const customUserAgent = config.get(ConfigKey.CustomUserAgent)
+  const customUserAgent = config.get(ConfigKey.CustomUserAgent)
 
-    if (customUserAgent) {
-      app.userAgentFallback = customUserAgent
+  if (customUserAgent) {
+    app.userAgentFallback = customUserAgent
+  }
+
+  createWindow()
+
+  initOrUpdateMenu()
+
+  const { webContents } = mainWindow!
+
+  webContents.on('dom-ready', () => {
+    if (!shouldStartMinimized) {
+      mainWindow.show()
     }
+  })
 
-    createWindow()
-
-    initOrUpdateMenu()
-
-    const { webContents } = mainWindow!
-
-    webContents.on('dom-ready', () => {
-      if (!shouldStartMinimized) {
-        mainWindow.show()
-      }
+  if (config.get(ConfigKey.DarkMode) === undefined) {
+    const { response } = await dialog.showMessageBox({
+      type: 'info',
+      message: `${app.name} (now) has dark mode! Do you want to enable it?`,
+      detail:
+        'It\'s recommended to set the Gmail theme to "Default" in order for dark mode to work properly.',
+      buttons: ['Yes', 'No', 'Follow System Appearance', 'Ask Again Later']
     })
 
-    if (config.get(ConfigKey.DarkMode) === undefined) {
-      const { response } = await dialog.showMessageBox({
-        type: 'info',
-        message: `${app.name} (now) has dark mode! Do you want to enable it?`,
-        detail:
-          'It\'s recommended to set the Gmail theme to "Default" in order for dark mode to work properly.',
-        buttons: ['Yes', 'No', 'Follow System Appearance', 'Ask Again Later']
-      })
-
-      if (response === 0) {
-        nativeTheme.themeSource = 'dark'
-        config.set(ConfigKey.DarkMode, true)
-        initOrUpdateMenu()
-      } else if (response === 1) {
-        nativeTheme.themeSource = 'light'
-        config.set(ConfigKey.DarkMode, false)
-        initOrUpdateMenu()
-      } else if (response === 2) {
-        nativeTheme.themeSource = 'system'
-        config.set(ConfigKey.DarkMode, 'system')
-        initOrUpdateMenu()
-      }
+    if (response === 0) {
+      nativeTheme.themeSource = 'dark'
+      config.set(ConfigKey.DarkMode, true)
+      initOrUpdateMenu()
+    } else if (response === 1) {
+      nativeTheme.themeSource = 'light'
+      config.set(ConfigKey.DarkMode, false)
+      initOrUpdateMenu()
+    } else if (response === 2) {
+      nativeTheme.themeSource = 'system'
+      config.set(ConfigKey.DarkMode, 'system')
+      initOrUpdateMenu()
     }
-  })()
+  }
+})()

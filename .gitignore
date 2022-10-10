@@ -37,4 +37,5 @@ _deps
 .env
 .fid
 _build
-dist
+dist/
+dist-js/

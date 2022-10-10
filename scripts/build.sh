@@ -15,4 +15,9 @@ export TS=$(date +%Y%m%d%H%M%S)
 # main 
 [ -z "${BASH_SOURCE[0]}" -o "${BASH_SOURCE[0]}" = "$0" ] || return
 cd $baseDir/..
-rm -rf dist dist-js  && yarn compile && yarn build:windows
+
+rm -rf dist dist-js  && yarn compile
+
+echo "for macOS, run `npm run build:macos`"
+set -x
+yarn build:windows

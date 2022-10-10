@@ -4,8 +4,8 @@
 
 下载地址：
 
-* [Windows](http://cdndownload2.chatopera.com/installation/cskefu/cskefu-w3-2.25.3-win.exe)
-* [macOS](http://cdndownload2.chatopera.com/installation/cskefu/cskefu-w3-2.25.3-mac.dmg)
+- [Windows](http://cdndownload2.chatopera.com/installation/cskefu/cskefu-w3-2.25.3-win.exe)
+- [macOS](http://cdndownload2.chatopera.com/installation/cskefu/cskefu-w3-2.25.3-mac.dmg)
 
 ![image](./media/QQ截图20221010125430.png)
 

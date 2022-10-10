@@ -25,8 +25,10 @@ CMakeFiles
 CMakeScripts
 Testing
 Makefile
-build
-build-*
+./build-*
+build/*
+!build/icon.png
+!build/icons
 cmake_install.cmake
 install_manifest.txt
 compile_commands.json
